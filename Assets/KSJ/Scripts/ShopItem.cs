@@ -166,7 +166,7 @@ public class ShopItem : MonoBehaviour
 				DataManager.Instance.sushi += quantity;
 				break;
 			case 100: // 통조림으로 은열쇠 구입 - 은열쇠 상점
-				if (DataManager.Instance.cannedFood - cannedFoodCost < 0 || DataManager.Instance.silverKey > DataManager.Instance.maxSilverKey)
+				if (DataManager.Instance.cannedFood - cannedFoodCost < 0 || DataManager.Instance.silverKey > 999)
 				{
 					KSJSoundManager.Instance.PlaySfx(KSJSoundManager.Sfx.Negative);
 					break;
@@ -176,7 +176,7 @@ public class ShopItem : MonoBehaviour
 				break;
 			
 			case 101:// 초밥으로 은열쇠 구입 - 은열쇠 상점
-				if (DataManager.Instance.sushi - sushiCost < 0 || DataManager.Instance.silverKey > DataManager.Instance.maxSilverKey)
+				if (DataManager.Instance.sushi - sushiCost < 0 || DataManager.Instance.silverKey > 999)
 				{
 					KSJSoundManager.Instance.PlaySfx(KSJSoundManager.Sfx.Negative);
 					break;

@@ -86,8 +86,16 @@ public class UIMapping : MonoBehaviour
 		// 최대치 관리
 		if (dataManager.sushi > dataManager.sushiMax)
 			dataManager.sushi = dataManager.sushiMax + 1;
-		if (dataManager.silverKey > dataManager.maxSilverKey)
-			dataManager.silverKey = dataManager.maxSilverKey;
+		if (dataManager.silverKey > 998)
+		{
+			dataManager.silverKey = 999;
+			dataManager.SaveDataToJson();
+		}
+		if (dataManager.goldKey > 98)
+		{
+			dataManager.goldKey = 99;
+			dataManager.SaveDataToJson();
+		}
 		
 		UpdateCatsDesire();
 		UpdateCharacterUI();
@@ -332,7 +340,7 @@ public class UIMapping : MonoBehaviour
 		}
 		else
 		{
-			silverTimeKeyText.text = "실버 키: 최대치 도달";
+			silverTimeKeyText.text = "최대치 도달";
 		}
 
 		// 골드 키 처리
@@ -354,7 +362,7 @@ public class UIMapping : MonoBehaviour
 		}
 		else
 		{
-			goldKeyTimeText.text = "골드 키: 최대치 도달";
+			goldKeyTimeText.text = "최대치 도달";
 		}
 
 		UpdateLobbyUI(); // 열쇠 갱신을 UI에 반영
@@ -368,7 +376,7 @@ public class UIMapping : MonoBehaviour
 		{
 			TimeSpan silverTimeRemaining = TimeSpan.FromSeconds(silverTimeLeft);
 
-			silverTimeKeyText.text = $"실버 키: {silverTimeRemaining.Minutes:D2}:{silverTimeRemaining.Seconds:D2} 후 생성";
+			silverTimeKeyText.text = $"{silverTimeRemaining.Minutes:D2}:{silverTimeRemaining.Seconds:D2}";
 		}
 		else
 		{
@@ -386,7 +394,7 @@ public class UIMapping : MonoBehaviour
 		{
 			TimeSpan goldTimeRemaining = TimeSpan.FromSeconds(goldTimeLeft);
 
-			goldKeyTimeText.text = $"골드 키: {goldTimeRemaining.Minutes:D2}:{goldTimeRemaining.Seconds:D2} 후 생성";
+			goldKeyTimeText.text = $"{goldTimeRemaining.Minutes:D2}:{goldTimeRemaining.Seconds:D2}";
 		}
 		else
 		{
