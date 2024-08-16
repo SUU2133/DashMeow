@@ -54,7 +54,16 @@ public class ShopItem : MonoBehaviour
 
 	}
 
-	private void Update() { }
+	private void Update() {
+		if (itemID == 20 && DataManager.Instance.freeSushi == 1)
+		{
+			gameObject.SetActive(false);
+		}
+		else if (itemID == 20 && DataManager.Instance.freeSushi == 0)
+		{
+			gameObject.SetActive(true);
+		}
+	}
 
 	public void OnClick()
 	{
