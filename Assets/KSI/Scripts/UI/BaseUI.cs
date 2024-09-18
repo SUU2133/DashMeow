@@ -10,7 +10,6 @@ public class BaseUI : MonoBehaviour
 	protected Dictionary<string, Button> buttons;
 	protected Dictionary<string, TMP_Text> texts;
 	protected Dictionary<string, Image> images;
-	// TODO : add UI component
 
 	protected virtual void Awake()
 	{

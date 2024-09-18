@@ -1,67 +1,125 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
-// °¢ ¾À ¸¶´Ù ÀÖ´Â BaseScene Ã£¾Æ¼­ °¡Á®´Ù ÁÜ
+public enum SceneNames
+{ 
+	LoadingScene,
+	LoginScene,
+	LobbyScene
+}
+
 public class SceneManager : MonoBehaviour
 {
-	private LoadingUI loadingUI;
+	public static string GetActiveScene()
+	{ 
+		return UnitySceneManager.GetActiveScene().name;
+	}
 
-	BaseScene curScene;
-	public BaseScene CurScene
+	public static void LoadScene(string sceneName = "")
 	{
-		get
+		if (sceneName == "")
 		{
-			// FindObjectOfTypeÀ» ÀÚÁÖ ¾²¸é ºÎ´ãÀÌ µÇ´Ï±î Null·Î È®ÀÎÇÔ
-			if (curScene == null)
-				curScene = GameObject.FindObjectOfType<BaseScene>();
-
-			return curScene;
+			UnitySceneManager.LoadScene(GetActiveScene());
+		}
+		else
+		{
+			UnitySceneManager.LoadScene(sceneName);
 		}
 	}
 
-	void Awake()
+	public static void LoadScene(SceneNames sceneName)
 	{
-		//LoadingUI ui = GameManager.Resource.Load<LoadingUI>("UI/LoadingUI");
-		//loadingUI = Instantiate(ui);
-		//loadingUI.transform.SetParent(transform, false);
+		UnitySceneManager.LoadScene(sceneName.ToString());
 	}
 
-	public void LoadScene(string sceneName)
+	public void StartGame()
 	{
-		StartCoroutine(LoadingRoutine(sceneName));
+		UnitySceneManager.LoadScene("INFINITEScene");
+		Time.timeScale = 0;
+		Time.timeScale = 1;
 	}
 
-	IEnumerator LoadingRoutine(string sceneName)
+	public void LoadLOBBY()
 	{
-		loadingUI.FadeOut();
-		yield return new WaitForSeconds(0.5f);
-		//·Îµù Áß¿¡´Â °ÔÀÓÀÇ ½Ã°£À» ¸ØÃçÁÜ
-		Time.timeScale = 0f;
-
-		// ºñµ¿±â½Ä ·Îµù
-		AsyncOperation oper = UnitySceneManager.LoadSceneAsync(sceneName);
-		while (!oper.isDone)
-		{
-			loadingUI.SetProgress(Mathf.Lerp(0.0f, 0.5f, oper.progress));
-			yield return null;
-		}
-
-		if (CurScene != null)
-		{
-			CurScene.LoadAsync();
-			while (CurScene.progress < 1f)
-			{
-				loadingUI.SetProgress(Mathf.Lerp(0.5f, 1.0f, CurScene.progress));
-				yield return null;
-			}
-		}
-
-		loadingUI.SetProgress(1.0f);
-		//·Îµù Áß¿¡´Â °ÔÀÓÀÇ ½Ã°£À» ¸ØÃá °Í ÇØÁ¦
-		Time.timeScale = 1f;
-		loadingUI.FadeIn();
-		yield return new WaitForSeconds(1f);
+		GameManager.GameModeSystem.curGameMode = GameModeSystem.GameMode.LOBBY;
 	}
+
+	public void LoadSUB()
+	{
+		GameManager.GameModeSystem.curGameMode = GameModeSystem.GameMode.SUB;
+	}
+
+	public void LoadBOSS()
+	{
+		GameManager.GameModeSystem.curGameMode = GameModeSystem.GameMode.BOSS;
+	}
+
+	public void LoadBERSERKBOSS()
+	{
+		GameManager.GameModeSystem.curGameMode = GameModeSystem.GameMode.BERSERKBOSS;
+	}
+
+	public void LoadINFINITE()
+	{
+		GameManager.GameModeSystem.curGameMode = GameModeSystem.GameMode.INFINITE;
+	}
+
+	//private LoadingUI loadingUI;
+
+	//BaseScene curScene;
+	//public BaseScene CurScene
+	//{
+	//	get
+	//	{
+	//		// FindObjectOfTypeì„ ìì£¼ ì“°ë©´ ë¶€ë‹´ì´ ë˜ë‹ˆê¹Œ Nullë¡œ í™•ì¸í•¨
+	//		if (curScene == null)
+	//			curScene = GameObject.FindObjectOfType<BaseScene>();
+
+	//		return curScene;
+	//	}
+	//}
+
+	//void Awake()
+	//{
+	//	//LoadingUI ui = GameManager.Resource.Load<LoadingUI>("UI/LoadingUI");
+	//	//loadingUI = Instantiate(ui);
+	//	//loadingUI.transform.SetParent(transform, false);
+	//}
+
+	//public void LoadScene(string sceneName)
+	//{
+	//	StartCoroutine(LoadingRoutine(sceneName));
+	//}
+
+	//IEnumerator LoadingRoutine(string sceneName)
+	//{
+	//	loadingUI.FadeOut();
+	//	yield return new WaitForSeconds(0.5f);
+	//	//ë¡œë”© ì¤‘ì—ëŠ” ê²Œì„ì˜ ì‹œê°„ì„ ë©ˆì¶°ì¤Œ
+	//	Time.timeScale = 0f;
+
+	//	// ë¹„ë™ê¸°ì‹ ë¡œë”©
+	//	AsyncOperation oper = UnitySceneManager.LoadSceneAsync(sceneName);
+	//	while (!oper.isDone)
+	//	{
+	//		loadingUI.SetProgress(Mathf.Lerp(0.0f, 0.5f, oper.progress));
+	//		yield return null;
+	//	}
+
+	//	if (CurScene != null)
+	//	{
+	//		CurScene.LoadAsync();
+	//		while (CurScene.progress < 1f)
+	//		{
+	//			loadingUI.SetProgress(Mathf.Lerp(0.5f, 1.0f, CurScene.progress));
+	//			yield return null;
+	//		}
+	//	}
+
+	//	loadingUI.SetProgress(1.0f);
+	//	//ë¡œë”© ì¤‘ì—ëŠ” ê²Œì„ì˜ ì‹œê°„ì„ ë©ˆì¶˜ ê²ƒ í•´ì œ
+	//	Time.timeScale = 1f;
+	//	loadingUI.FadeIn();
+	//	yield return new WaitForSeconds(1f);
+	//}
 }

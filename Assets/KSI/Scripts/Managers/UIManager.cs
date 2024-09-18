@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,11 +5,12 @@ using UnityEngine.EventSystems;
 public class UIManager : MonoBehaviour
 {
 	private EventSystem eventSystem;
+	private Stack<PopUpUI> popUpStack;
+
 	private Canvas popUpCanvas;
 	private Canvas windowCanvas;
 	private Canvas inGameCanvas;
-	private Stack<PopUpUI> popUpStack; // 편리하게 UI 관리를 위힌 Stack 구조 사용
-
+	
 	private void Awake()
 	{
 		eventSystem = GameManager.Resource.Instantiate<EventSystem>("UI/EventSystem");
@@ -19,58 +19,57 @@ public class UIManager : MonoBehaviour
 		popUpCanvas = GameManager.Resource.Instantiate<Canvas>("UI/Canvas");
 		popUpCanvas.gameObject.name = "PopUpCanvas";
 		popUpCanvas.sortingOrder = 100;
+		popUpCanvas.transform.SetParent(transform);
 		popUpStack = new Stack<PopUpUI>();
 
 		windowCanvas = GameManager.Resource.Instantiate<Canvas>("UI/Canvas");
 		windowCanvas.gameObject.name = "WindowCanvas";
 		windowCanvas.sortingOrder = 10;
+		windowCanvas.transform.SetParent(transform);
 
 		//gameSceneCanvas.sortingOrder = 1;
 
 		inGameCanvas = GameManager.Resource.Instantiate<Canvas>("UI/Canvas");
 		inGameCanvas.gameObject.name = "InGameCanvas";
 		inGameCanvas.sortingOrder = 0;
+		 inGameCanvas.transform.SetParent(transform);
 	}
 
-	public void UIRestart()
-	{
-		Destroy(eventSystem.gameObject);
-		Awake();
-	}
+	//public void UIRestart()
+	//{
+	//	Destroy(eventSystem.gameObject);
+	//	Awake();
+	//}
 
-	// 만든 ShowPopUpUI은 일반화를 적용하면 PopUpUI를 상속받는 다른 팝업 UI를 반환받게끔 함
-	public void ShowPopUpUI(PopUpUI popUpUI)
+	public T ShowPopUpUI<T>(T popUpUI) where T : PopUpUI
 	{
-		// 이전의 팝업 UI가 있다면 잠깐 안 보이게 함
 		if (popUpStack.Count > 0)
 		{
 			PopUpUI prevUI = popUpStack.Peek();
 			prevUI.gameObject.SetActive(false);
 		}
 
-		PopUpUI ui = GameManager.Pool.GetUI(popUpUI);
+		T ui = GameManager.Pool.GetUI(popUpUI);
 		ui.transform.SetParent(popUpCanvas.transform, false);
 
-		// UI 관리를 위힌 Stack 구조 사용
 		popUpStack.Push(ui);
 
-		// 팝업이 있을 때 시간 멈추게 함
 		Time.timeScale = 0;
+
+		return ui;
 	}
 
-	public void ShowPopUpUI(string path)
+	public T ShowPopUpUI<T>(string path) where T : PopUpUI
 	{
-		PopUpUI ui = GameManager.Resource.Load<PopUpUI>(path);
-		ShowPopUpUI(ui);
+		T ui = GameManager.Resource.Load<T>(path);
+		return ShowPopUpUI(ui);
 	}
 
 	public void ClosePopUpUI()
 	{
 		PopUpUI ui = popUpStack.Pop();
-		// 풀 매니저를 통해서 UI 반납함
 		GameManager.Pool.ReleaseUI(ui.gameObject);
 
-		// 가장 위에 있는 현재 UI를 활성화시켜서 보이게 함
 		if (popUpStack.Count > 0)
 		{
 			PopUpUI curUI = popUpStack.Peek();
@@ -78,7 +77,6 @@ public class UIManager : MonoBehaviour
 		}
 		else
 		{
-			// 팝업이 없을 때 시간 멈추게 함
 			Time.timeScale = 1f;
 		}
 	}
@@ -105,7 +103,6 @@ public class UIManager : MonoBehaviour
 
 	public void SelectWindowUI(WindowUI windowUI)
 	{
-		// 선택한 UI가 계층 구조 상에서 가장 아래로 내려가짐
 		windowUI.transform.SetAsLastSibling();
 	}
 
@@ -123,7 +120,6 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
-	// 일반화가 꼭 필요함
 	public T ShowInGameUI<T>(T gameUi) where T : InGameUI
 	{
 		T ui = GameManager.Pool.GetUI(gameUi);
